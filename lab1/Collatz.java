@@ -7,6 +7,7 @@ public class Collatz {
      * if n is 1 , return 1 (which will stop the loop)
      * if n is even, return n/2
      * if n is odd, return n*3 + 1
+     * 
      *  */
     public static int nextNumber(int n) {
 
