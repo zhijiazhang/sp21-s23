@@ -6,8 +6,10 @@ package DebugExercise;
  */
 public class DebugExercise1 {
     public static int divideThenRound(int top, int bottom) {
-        int quotient = top / bottom;
-        int result = Math.round(quotient);
+        //issue is because using integer division aka floor division, so 3/4 = 0
+        //cast to double
+        double quotient = (double) top / bottom;
+        int result = (int) Math.round(quotient);
         return result;
     }
 
@@ -24,7 +26,7 @@ public class DebugExercise1 {
 
         int t3 = 3;
         int b3 = 4;
-        int result3 = divideThenRound(t3, b3);
+        int result3 = divideThenRound(t3, b3); //result3 should be 1
         System.out.println("round(" + t3 + "/" + b3 + ")=" + result3);
     }
 }
