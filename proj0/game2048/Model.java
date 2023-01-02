@@ -137,7 +137,26 @@ public class Model extends Observable {
      *  Empty spaces are stored as null.
      * */
     public static boolean emptySpaceExists(Board b) {
-        // TODO: Fill in this function.
+
+        //board is 4x4 , rows and columns start at index 0
+        //iterate over all rows anbd columns
+        //check if the tile is null (meaning it doesn't exist at the particular row,column)
+        //if it null then its empty, so retyrn true
+        //if we exist the loop and that means no null tiles, so no empty spaces
+
+        for (int i = 0; i < 4; i++){
+
+            for (int j = 0; j < 4; j++){
+
+                Tile tile = b.tile(i,j);
+
+                if (tile == null){
+
+                    return true;
+                }
+            }
+        }
+
         return false;
     }
 
@@ -147,7 +166,27 @@ public class Model extends Observable {
      * given a Tile object t, we get its value with t.value().
      */
     public static boolean maxTileExists(Board b) {
-        // TODO: Fill in this function.
+
+        //iterate over entire board, check if any of tbe tile values are 2048 (MAX_PIECE), return true if there is
+
+        for (int i = 0; i < 4; i++){
+
+            for (int j = 0; j < 4; j++){
+
+                Tile tile = b.tile(i,j);
+
+                //needs this conditional to catch if the tile is null (because it will throw a NullPointerException
+                if (tile == null){
+                    continue;
+                }
+
+                if (tile.value() == MAX_PIECE){
+
+                    return true;
+                }
+            }
+        }
+
         return false;
     }
 
