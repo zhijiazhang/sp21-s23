@@ -197,7 +197,47 @@ public class Model extends Observable {
      * 2. There are two adjacent tiles with the same value.
      */
     public static boolean atLeastOneMoveExists(Board b) {
-        // TODO: Fill in this function.
+
+        //base case if there's a empty space then there's a move, so return true
+        if (Model.emptySpaceExists(b)){
+            return true;
+        }
+
+        //iterate through board and check adjacent neighbors
+        int up = 0;
+        int down = 0;
+        int left = 0;
+        int right = 0;
+
+        for (int i = 0; i < 4; i++){
+
+            for (int j = 0; j < 4; j++) {
+                //gets the value of the current tile
+               int tileValue = b.tile(i, j).value();
+                //gets values of adjacent tiles
+                if (i - 1 >= 0){
+                    up = b.tile(j, i-1).value();
+                }
+                if (i + 1 < 4){
+                    down = b.tile(j, i+1).value();
+                }
+                if (j - 1 >= 0){
+                    left = b.tile(j-1, i).value();
+                }
+                if (j + 1 < 4){
+                    up = b.tile(j+1, i).value();
+                }
+                //if any of the values of adjacent tiles are equal to the values of current tile, there's a valid move
+                if (tileValue == up || tileValue == down || tileValue == left || tileValue == right) {
+                    return true;
+                }
+                //else reset values of neighbors back to 0
+                up = 0;
+                down = 0;
+                left = 0;
+                right = 0;
+            }
+        }
         return false;
     }
 
