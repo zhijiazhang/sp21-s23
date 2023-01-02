@@ -5,6 +5,17 @@ import org.junit.Test;
 
 public class ArithmeticTest {
 
+    //unit tests follow this format
+    //tests must bve non-static
+
+    /*
+    @Test
+    public void testMethodName() {
+
+        //tests
+    }
+    */
+
     /** Performs a few arbitrary tests to see if the product method is
      * correct */
     @Test
