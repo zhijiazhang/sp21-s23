@@ -2,6 +2,9 @@ package game2048;
 
 import static org.junit.Assert.*;
 
+/**
+ * @author Zhijia Zhang
+ */
 public class TestUtils {
 
     /** The Model we'll be testing. */

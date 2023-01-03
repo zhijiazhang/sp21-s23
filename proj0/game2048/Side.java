@@ -1,7 +1,7 @@
 package game2048;
 
 /** Symbolic names for the four sides of a board.
- *  @author P. N. Hilfinger */
+ *  @author Zhijia Zhang */
 public enum Side {
     /** The parameters (COL0, ROW0, DCOL, and DROW) for each of the
      *  symbolic directions, D, below are to be interpreted as follows:

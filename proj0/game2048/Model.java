@@ -5,7 +5,7 @@ import java.util.Observable;
 
 
 /** The state of a game of 2048.
- *  @author TODO: YOUR NAME HERE
+ *  @author Zhijia Zhang
  */
 public class Model extends Observable {
     /** Current contents of the board. */
@@ -110,7 +110,9 @@ public class Model extends Observable {
         boolean changed;
         changed = false;
 
-        boolean temp = false;
+        int temp = 0;
+
+        int scoreKeeper = 0;
 
         // TODO: Modify this.board (and perhaps this.score) to account
         // for the tilt to the Side SIDE. If the board changed, set the
@@ -120,13 +122,19 @@ public class Model extends Observable {
         //if side is north, leave the viewing perspective (because default is north)
         if (side == Side.NORTH){
 
+            //move board at each column
             for (int i = 0; i < 4; i++){
 
                 temp = this.moveColumn(i);
 
-                if (temp){
+                if (temp != 0){
 
-                    changed = temp;
+                    changed = true;
+
+                    if (temp != -1){
+
+                        scoreKeeper += temp;
+                    }
                 }
             }
         }
@@ -137,16 +145,20 @@ public class Model extends Observable {
 
             this.board.setViewingPerspective(Side.WEST);
 
-            //then move board
+            //move board at each column
             for (int i = 0; i < 4; i++){
                 temp = this.moveColumn(i);
 
-                if (temp){
+                if (temp != 0){
 
-                    changed = temp;
+                    changed = true;
+
+                    if (temp != -1){
+
+                        scoreKeeper += temp;
+                    }
                 }
             }
-
             //set board back to NORTH viewing perspective after moving board
             this.board.setViewingPerspective(Side.NORTH);
         }
@@ -156,38 +168,48 @@ public class Model extends Observable {
 
             this.board.setViewingPerspective(Side.EAST);
 
-            //then move board
+            //move board at each column
             for (int i = 0; i < 4; i++){
                 temp = this.moveColumn(i);
 
-                if (temp){
+                if (temp != 0){
 
-                    changed = temp;
+                    changed = true;
+
+                    if (temp != -1){
+
+                        scoreKeeper += temp;
+                    }
                 }
-
-
-
             }
 
             //set board back to NORTH viewing perspective after moving board
             this.board.setViewingPerspective(Side.NORTH);
         }
 
-        //if side is down
+        //if side is south, set viewingPerspective to south
         if (side == Side.SOUTH){
-
             this.board.setViewingPerspective(Side.SOUTH);
+
+            //move board at each column
             for (int i = 0; i < 4; i++){
                 temp = this.moveColumn(i);
 
-                if (temp){
+                if (temp != 0){
 
-                    changed = temp;
+                    changed = true;
+
+                    if (temp != -1){
+
+                        scoreKeeper += temp;
+                    }
                 }
             }
             this.board.setViewingPerspective(Side.NORTH);
         }
+        this.score += scoreKeeper;
 
+        //check if game is over
         checkGameOver();
 
         if (changed) {
@@ -204,24 +226,27 @@ public class Model extends Observable {
      * @param column to be moved
      * @return True if a square was moved
      */
-    public boolean moveColumn(int column){
+    public int moveColumn(int column){
 
+        //tracks if we moved something
         boolean movedSomething = false;
 
+        //tracks the score of the column (returning this number to update the instance variable score)
+        int columnScore = 0;
+
+        //tracks if b tile merged to a
         boolean bMerge = false;
 
+        //tracks if c tile merged to a or b
         boolean cMerge = false;
 
 
         //tile a (row 3)
         Tile a = this.board.tile(column, 3);
-
         //tile b (row 2)
         Tile b = this.board.tile(column, 2);
-
         //tile c (row 1)
         Tile c = this.board.tile(column, 1);
-
         //tile d (row 0)
         Tile d = this.board.tile(column, 0);
 
@@ -230,7 +255,6 @@ public class Model extends Observable {
 
         /*
         Everything is in north view perspective
-
         Check from top down
 
         top of board
@@ -241,22 +265,11 @@ public class Model extends Observable {
        0 [ d ] <- then check here
 
         bottom of board
-
          */
-
 
 
 
         //Check tile b
-
-        /*
-        First check: If the tile is null, skip it (aka we only care if it's not null)
-
-        Second check: if the space above [ a ] is empty , move it up and set moved something to true
-
-        Third Check: if the space above [ a ] is not empty , check if the values are the same. If they are the same,
-                     move it up and set moved something to true and mergedB to true. If they are not same, don't move anything
-         */
 
         //if b is not empty
         if ( b != null){
@@ -264,26 +277,40 @@ public class Model extends Observable {
             //if a is empty, move b to row 3
             if (a == null){
                 this.board.move(column, 3, b);
+
+                //mark that we moved something
                 movedSomething = true;
+                
+                //a is now b and b is null
+                a = this.board.tile(column, 3);
+                b = null;
             }
 
-            //if a is not empty
+            //merge
+            //if a is not empty & a and b have the same value, we can move b to a merge them
             else if (a.value() == b.value()) {
-
                 this.board.move(column, 3, b);
-                //test merge fix
+
+                //increment column score
+                columnScore += this.board.tile(column,3).value();
+
+                //a is now the updated tile
+                a = this.board.tile(column,3);
+
+                //b is null since we moved it
                 b = null;
+
+                //we moved something and merged b to a, so set both as true
                 movedSomething = true;
                 bMerge = true;
             }
 
-            //third case if a is not empty, but a.value != b.value
+            //if a is not empty, but a.value != b.value, we don't move b
         }
 
 
 
         //Check tile c
-
         /*
 
         First check: If the tile is null, skip it (aka we only care if it's not null)
@@ -301,114 +328,184 @@ public class Model extends Observable {
         //if c is not empty
         if (c != null){
 
-
+            //if a and b are both empty, we can move c all the way to a
             if (a == null && b == null){
                 this.board.move(column, 3, c);
+
+                //moved something
                 movedSomething = true;
+
+                //a tile is now c and c is null
+                a = this.board.tile(column, 3);
+                c = null;
             }
 
-
+            //a is not empty but b is
             else if (b == null){
 
+                //merge
+                //if c is equal to a and a is not the result of a merged block, move c to a and merge them
                 if ((c.value() == a.value() && !bMerge)){
                     this.board.move(column, 3, c);
+
+                    //increment column score and update movedSomething
+                    columnScore += board.tile(column, 3).value();
                     movedSomething = true;
 
-                    //test merge fix
+                    //a is now the updated tile and c is now null since we moved it
+                    a = this.board.tile(column, 3);
                     c = null;
+
+                    //since we merged c with another block, set cMerge to true
                     cMerge = true;
                 }
 
+
+                //if a already been merged or the values aren't equal, move c to b
                 else if ((c.value() == a.value() && bMerge) || (c.value() != a.value())){
                     this.board.move(column, 2, c);
+
+                    //updated movedSomething
                     movedSomething = true;
+
+                    //b is now c and c is null
+                    b = this.board.tile(column, 2);
+                    c = null;
                 }
 
             }
 
+            //if a and b both have a square, check if we can merge c and b
             else {
 
+                //merge
+                //if b and c have the same value, we can merge c to b
                 if (b.value() == c.value()){
-
                     this.board.move(column, 2, c);
 
+                    //increment column score
+                    columnScore += this.board.tile(column, 2).value();
+
+                    //update movedSomething
                     movedSomething = true;
 
+                    //b is now the updated square and c is null and update cMerge because we merged c
+                    b = this.tile(column, 2);
                     c = null;
                     cMerge = true;
                 }
             }
+
+            //if a and b both have a square and can't merge c to anything, don't move c
         }
 
 
         //Tile d
 
-        /*
-        First check: If the tile is null, skip it (aka we only care if it's not null)
-         */
-
+        //executes if d is not null
         if (d != null){
 
+            //if a, b, and c are all null then we can move d all the way up to a
             if (a == null && b == null && c == null){
-
                 this.board.move(column, 3, d);
+
+                //update movedSomething
                 movedSomething = true;
+
+                //a is now d and d is null
+                a = this.board.tile(column, 3);
+                d = null;
             }
 
+            //if there's a block in a but b and c are null
             else if (b == null && c == null) {
 
+                //merge
+                //if the a == d and a is not the result of a merge we can merge d to a
                 if (a.value() == d.value() && !bMerge){
-
                     this.board.move(column, 3, d);
+
+                    //increment columnScore and update movedSomething
+                    columnScore += this.board.tile(column, 3).value();
                     movedSomething = true;
 
+                    //a is now the merged block and d is null
+                    a = this.board.tile(column, 3);
                     d = null;
                 }
 
+                //if a == d but a is a merge or a != d, move d to b
                 else if ((a.value() == d.value() && bMerge) || (a.value() != d.value())){
                     this.board.move(column, 2, d);
+
+                    //update moved something
                     movedSomething = true;
+
+                    //b is now d and d is null since we moved it
+                    b = this.board.tile(column, 2);
+                    d = null;
                 }
 
             }
 
+            //if there are blocks in a and b but c is null
             else if (c == null) {
 
+                //if b==d and b is not the result of c merge , we can merge d to b
                 if ((b.value() == d.value() && !cMerge)){
                     this.board.move(column, 2, d);
+
+                    //increment column score and update movedSomething
+                    columnScore += this.board.tile(column, 2).value();
                     movedSomething = true;
 
+                    //b is now the merged block and d is null
+                    b = this.board.tile(column, 2);
                     d = null;
+
                 }
 
+                //if b is the result of c merge or b != d, move d to c
                 else if ((b.value() == d.value() && cMerge) || (b.value() != d.value())){
                     this.board.move(column, 1, d);
                     movedSomething = true;
+
+                    //c is now d and d is null
+                    c= this.board.tile(column, 1);
+                    d = null;
                 }
 
             }
 
+            //if a, b, c are all occupied
             else{
 
+                //merge
+                //check if we can m,erge d and c
                 if (c.value() == d.value()){
 
                     this.board.move(column, 1, d);
+
+                    //increment columScore and update movedSomething
+                    columnScore += this.board.tile(column, 1).value();
                     movedSomething = true;
 
+                    //c is now d and d is null since we moved it
                     d = null;
                 }
+
+                //if a,b,c are all occupied c!=d, don't move d
             }
         }
 
-        return movedSomething;
+
+        if (columnScore == 0 && movedSomething){
+
+            columnScore = -1;
+        }
+
+        return columnScore;
     }
-
-
-
-
-
-
-
 
 
 

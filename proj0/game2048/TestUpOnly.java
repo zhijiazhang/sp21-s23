@@ -6,7 +6,7 @@ import static org.junit.Assert.*;
 
 /** Tests the tilt() method in the up (Side.NORTH) direction only.
  *
- * @author Omar Khan
+ * @author Zhijia Zhang
  */
 public class TestUpOnly extends TestUtils {
 

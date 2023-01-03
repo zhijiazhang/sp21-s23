@@ -15,7 +15,7 @@ import static java.lang.Math.abs;
 import static java.lang.Math.round;
 
 /** A widget that displays a 2048 board.
- *  @author P. N. Hilfinger
+ *  @author Zhijia Zhang
  */
 class BoardWidget extends Pad {
 

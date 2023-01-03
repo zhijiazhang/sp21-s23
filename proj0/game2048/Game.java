@@ -3,7 +3,7 @@ package game2048;
 import static game2048.Side.*;
 
 /** The input/output and GUI controller for play of a game of 2048.
- *  @author P. N. Hilfinger. */
+ *  @author Zhijia Zhang. */
 public class Game {
 
     /** Controller for a game represented by MODEL, using SOURCE as the

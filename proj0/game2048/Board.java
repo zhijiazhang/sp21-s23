@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * @author hug
+ * @author Zhijia Zhang
  */
 public class Board implements Iterable<Tile> {
     /** Current contents of the board. */

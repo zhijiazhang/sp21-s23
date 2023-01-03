@@ -12,7 +12,7 @@ import java.awt.event.KeyEvent;
 
 
 /** The GUI controller for a 2048 board and buttons.
- *  @author P. N. Hilfinger
+ *  @author Zhijia Zhang
  */
 class GUI extends TopLevel implements Observer {
 

@@ -8,7 +8,7 @@ import static org.junit.Assert.*;
  * You shouldn't expect to pass these tests until you're passing all the tests
  * in TestEmptySpace.
  *
- * @author Omar Khan
+ * @author Zhijia Zhang
  */
 public class TestAtLeastOneMoveExists {
 

@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.util.Random;
 
 /** A type of InputSource that receives commands from a GUI.
- *  @author P. N. Hilfinger
+ *  @author Zhijia Zhang
  */
 class GUISource implements InputSource {
 

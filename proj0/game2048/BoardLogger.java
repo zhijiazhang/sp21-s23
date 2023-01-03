@@ -4,7 +4,7 @@ import java.util.Observer;
 import java.util.Observable;
 
 /** An observer that prints changes to a Model.
- *  @author P. N. Hilfinger
+ *  @author Zhijia Zhang
  */
 class BoardLogger implements Observer {
 

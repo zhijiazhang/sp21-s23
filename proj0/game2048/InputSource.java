@@ -1,7 +1,7 @@
 package game2048;
 
 /** Describes a source of input commands.
- *  @author P. N. Hilfinger
+ *  @author Zhijia Zhang
  */
 interface InputSource {
 

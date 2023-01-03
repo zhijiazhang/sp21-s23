@@ -6,7 +6,7 @@ import static org.junit.Assert.*;
 
 /** Tests the emptySpaceExists() static method of Model.
  *
- * @author Omar Khan
+ * @author Zhijia Zhang
  */
 public class TestEmptySpace {
 

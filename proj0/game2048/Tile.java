@@ -1,7 +1,7 @@
 package game2048;
 
 /** Represents the image of a numbered tile on a 2048 board.
- *  @author P. N. Hilfinger.
+ *  @author Zhijia Zhang.
  */
 public class Tile {
 
