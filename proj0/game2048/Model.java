@@ -110,6 +110,8 @@ public class Model extends Observable {
         boolean changed;
         changed = false;
 
+        boolean temp = false;
+
         // TODO: Modify this.board (and perhaps this.score) to account
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
@@ -118,8 +120,17 @@ public class Model extends Observable {
         //if side is north, leave the viewing perspective (because default is north)
         if (side == Side.NORTH){
 
+            for (int i = 0; i < 4; i++){
 
+                temp = this.moveColumn(i);
+
+                if (temp){
+
+                    changed = temp;
+                }
+            }
         }
+
 
         //if side is west, set the viewing perspective to West
         if (side == Side.WEST){
@@ -127,16 +138,18 @@ public class Model extends Observable {
             this.board.setViewingPerspective(Side.WEST);
 
             //then move board
+            for (int i = 0; i < 4; i++){
+                temp = this.moveColumn(i);
 
+                if (temp){
 
-
-
-
+                    changed = temp;
+                }
+            }
 
             //set board back to NORTH viewing perspective after moving board
             this.board.setViewingPerspective(Side.NORTH);
         }
-
 
         //if side is east, set the viewing perspective to East
         if (side == Side.EAST){
@@ -144,21 +157,36 @@ public class Model extends Observable {
             this.board.setViewingPerspective(Side.EAST);
 
             //then move board
+            for (int i = 0; i < 4; i++){
+                temp = this.moveColumn(i);
+
+                if (temp){
+
+                    changed = temp;
+                }
 
 
 
-
-
+            }
 
             //set board back to NORTH viewing perspective after moving board
             this.board.setViewingPerspective(Side.NORTH);
         }
 
+        //if side is down
+        if (side == Side.SOUTH){
 
+            this.board.setViewingPerspective(Side.SOUTH);
+            for (int i = 0; i < 4; i++){
+                temp = this.moveColumn(i);
 
+                if (temp){
 
-
-
+                    changed = temp;
+                }
+            }
+            this.board.setViewingPerspective(Side.NORTH);
+        }
 
         checkGameOver();
 
@@ -167,6 +195,8 @@ public class Model extends Observable {
         }
         return changed;
     }
+
+
 
 
     /**
@@ -178,26 +208,46 @@ public class Model extends Observable {
 
         boolean movedSomething = false;
 
+        boolean bMerge = false;
+
+        boolean cMerge = false;
+
+
+        //tile a (row 3)
+        Tile a = this.board.tile(column, 3);
+
+        //tile b (row 2)
+        Tile b = this.board.tile(column, 2);
+
+        //tile c (row 1)
+        Tile c = this.board.tile(column, 1);
+
+        //tile d (row 0)
+        Tile d = this.board.tile(column, 0);
+
+
+
+
         /*
         Everything is in north view perspective
 
         Check from top down
 
-        top
-        [ a ] <- this will never move
-        [ b ] <- check starting here
-        [ c ] <- then check here
-        [ d ] <- then check here
-        down
+        top of board
+
+       3 [ a ] <- this will never move
+       2 [ b ] <- check starting here
+       1 [ c ] <- then check here
+       0 [ d ] <- then check here
+
+        bottom of board
 
          */
 
 
-        //level a
-        Tile a = this.board.tile(column, 3);
 
 
-        //level b
+        //Check tile b
 
         /*
         First check: If the tile is null, skip it (aka we only care if it's not null)
@@ -205,29 +255,152 @@ public class Model extends Observable {
         Second check: if the space above [ a ] is empty , move it up and set moved something to true
 
         Third Check: if the space above [ a ] is not empty , check if the values are the same. If they are the same,
-                     move it up and set moved something to true. If they are not same, don't move anything
-
-
+                     move it up and set moved something to true and mergedB to true. If they are not same, don't move anything
          */
 
-        Tile b = this.board.tile(column, 2);
-
+        //if b is not empty
         if ( b != null){
 
-
-            if (a == null || a.value() == b.value() ){
-
+            //if a is empty, move b to row 3
+            if (a == null){
                 this.board.move(column, 3, b);
-
                 movedSomething = true;
             }
+
+            //if a is not empty
+            else if (a.value() == b.value()) {
+
+                this.board.move(column, 3, b);
+                //test merge fix
+                b = null;
+                movedSomething = true;
+                bMerge = true;
+            }
+
+            //third case if a is not empty, but a.value != b.value
         }
 
 
 
+        //Check tile c
+
+        /*
+
+        First check: If the tile is null, skip it (aka we only care if it's not null)
+
+        Cases:
+
+        1. a and b are both empty, in this case move c directly to row 3
+
+        2. if b is empty, there is a block in a. if a.value == b.value and it hasnt been merged before, move c to row 3
+        3. else move c to row 2
+        4. if b is not empty, check if b.value = c.value. Move c if true, else dont move anything
+
+         */
+
+        //if c is not empty
+        if (c != null){
+
+
+            if (a == null && b == null){
+                this.board.move(column, 3, c);
+                movedSomething = true;
+            }
+
+
+            else if (b == null){
+
+                if ((c.value() == a.value() && !bMerge)){
+                    this.board.move(column, 3, c);
+                    movedSomething = true;
+
+                    //test merge fix
+                    c = null;
+                    cMerge = true;
+                }
+
+                else if ((c.value() == a.value() && bMerge) || (c.value() != a.value())){
+                    this.board.move(column, 2, c);
+                    movedSomething = true;
+                }
+
+            }
+
+            else {
+
+                if (b.value() == c.value()){
+
+                    this.board.move(column, 2, c);
+
+                    movedSomething = true;
+
+                    c = null;
+                    cMerge = true;
+                }
+            }
+        }
+
+
+        //Tile d
+
+        /*
+        First check: If the tile is null, skip it (aka we only care if it's not null)
+         */
+
+        if (d != null){
+
+            if (a == null && b == null && c == null){
+
+                this.board.move(column, 3, d);
+                movedSomething = true;
+            }
+
+            else if (b == null && c == null) {
+
+                if (a.value() == d.value() && !bMerge){
+
+                    this.board.move(column, 3, d);
+                    movedSomething = true;
+
+                    d = null;
+                }
+
+                else if ((a.value() == d.value() && bMerge) || (a.value() != d.value())){
+                    this.board.move(column, 2, d);
+                    movedSomething = true;
+                }
+
+            }
+
+            else if (c == null) {
+
+                if ((b.value() == d.value() && !cMerge)){
+                    this.board.move(column, 2, d);
+                    movedSomething = true;
+
+                    d = null;
+                }
+
+                else if ((b.value() == d.value() && cMerge) || (b.value() != d.value())){
+                    this.board.move(column, 1, d);
+                    movedSomething = true;
+                }
+
+            }
+
+            else{
+
+                if (c.value() == d.value()){
+
+                    this.board.move(column, 1, d);
+                    movedSomething = true;
+
+                    d = null;
+                }
+            }
+        }
 
         return movedSomething;
-
     }
 
 
