@@ -114,12 +114,131 @@ public class Model extends Observable {
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
 
+
+        //if side is north, leave the viewing perspective (because default is north)
+        if (side == Side.NORTH){
+
+
+        }
+
+        //if side is west, set the viewing perspective to West
+        if (side == Side.WEST){
+
+            this.board.setViewingPerspective(Side.WEST);
+
+            //then move board
+
+
+
+
+
+
+            //set board back to NORTH viewing perspective after moving board
+            this.board.setViewingPerspective(Side.NORTH);
+        }
+
+
+        //if side is east, set the viewing perspective to East
+        if (side == Side.EAST){
+
+            this.board.setViewingPerspective(Side.EAST);
+
+            //then move board
+
+
+
+
+
+
+            //set board back to NORTH viewing perspective after moving board
+            this.board.setViewingPerspective(Side.NORTH);
+        }
+
+
+
+
+
+
+
         checkGameOver();
+
         if (changed) {
             setChanged();
         }
         return changed;
     }
+
+
+    /**
+     * Check and move each column
+     * @param column to be moved
+     * @return True if a square was moved
+     */
+    public boolean moveColumn(int column){
+
+        boolean movedSomething = false;
+
+        /*
+        Everything is in north view perspective
+
+        Check from top down
+
+        top
+        [ a ] <- this will never move
+        [ b ] <- check starting here
+        [ c ] <- then check here
+        [ d ] <- then check here
+        down
+
+         */
+
+
+        //level a
+        Tile a = this.board.tile(column, 3);
+
+
+        //level b
+
+        /*
+        First check: If the tile is null, skip it (aka we only care if it's not null)
+
+        Second check: if the space above [ a ] is empty , move it up and set moved something to true
+
+        Third Check: if the space above [ a ] is not empty , check if the values are the same. If they are the same,
+                     move it up and set moved something to true. If they are not same, don't move anything
+
+
+         */
+
+        Tile b = this.board.tile(column, 2);
+
+        if ( b != null){
+
+
+            if (a == null || a.value() == b.value() ){
+
+                this.board.move(column, 3, b);
+
+                movedSomething = true;
+            }
+        }
+
+
+
+
+        return movedSomething;
+
+    }
+
+
+
+
+
+
+
+
+
+
 
     /** Checks if the game is over and sets the gameOver variable
      *  appropriately.
