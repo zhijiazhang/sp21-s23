@@ -2,3 +2,4 @@
 repo for berkeley cs61b
 
 week 1 ✅
+week 2 ✅
