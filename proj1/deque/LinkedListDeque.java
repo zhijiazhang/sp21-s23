@@ -239,18 +239,27 @@ public class LinkedListDeque <T>  {
 
 
 
-    //TODO note to self : bulk of method is done and unit tests pass, just need to implement recursive get()
-
-
-    /*
+    //TODO note to self : bulk of method is done and unit tests pass, just need to implement recursive get() [DONE]
 
     public T getRecursive(int index){
-
         //TODO
         //Same as get, but uses recursion
+
+        if (index < 0 || index >= this.size){
+
+            return null;
+        }
+        return this.getRecursiveHelper(0, index, this.sentinel.next);
+    }
+    
+    public T getRecursiveHelper(int counter, int index, Node n){
+        if (index == counter){
+            return n.item;
+        }
+        return getRecursiveHelper(counter + 1, index, n.next);
     }
 
-     */
+
 
 
     //ALSO need to implement these 2 special methods
@@ -261,7 +270,6 @@ public class LinkedListDeque <T>  {
         //TODO
 
     }
-
 
     public boolean equals(Object o){
 
@@ -292,7 +300,9 @@ public class LinkedListDeque <T>  {
 
         System.out.println(myLLD.size());
 
-        System.out.println(myLLD.get(1));
+        System.out.println(myLLD.get(0));
+
+        System.out.println(myLLD.getRecursive(0));
 
 
         myLLD.printDeque();
